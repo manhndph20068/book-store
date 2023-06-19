@@ -1,4 +1,4 @@
-*** Base React Test Fresher | Udemy Hỏi Dân IT ***
+**_ Book Store _**
 
 - React 18
 - React Router 6
