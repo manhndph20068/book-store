@@ -27,7 +27,6 @@ const LoginPage = () => {
     if (res?.data?.user) {
       localStorage.setItem("access_token", res.data.access_token);
       dispatch(doLogin(res.data.user));
-      console.log("res", res);
       message.success("Đăng Nhập thành công");
       navigate("/");
     } else {

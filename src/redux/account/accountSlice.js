@@ -10,6 +10,7 @@ const initialState = {
     id: "",
   },
   isAuthenticated: false,
+  isLoading: true,
 };
 
 export const accountSlice = createSlice({
@@ -20,6 +21,19 @@ export const accountSlice = createSlice({
     doLogin: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = true;
+      state.isLoading = false;
+    },
+    doLogout: (state, action) => {
+      (state.user = {
+        email: "",
+        phone: "",
+        fullName: "",
+        role: "",
+        avatar: "",
+        id: "",
+      }),
+        (state.isAuthenticated = false),
+        localStorage.removeItem("access_token");
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -27,7 +41,7 @@ export const accountSlice = createSlice({
   extraReducers: (builder) => {},
 });
 
-export const { doLogin } = accountSlice.actions;
+export const { doLogin, doLogout } = accountSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

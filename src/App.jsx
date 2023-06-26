@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  decrement,
-  increment,
-  incrementByAmount,
-  incrementAsync,
-  incrementIfOdd,
-  selectCount,
-} from "./redux/counter/counterSlice";
 import styles from "./styles/Counter.module.css";
 import LoginPage from "./pages/login";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -20,6 +12,11 @@ import Home from "./components/Home";
 import RegisterPage from "./pages/register";
 import { callFetchAccount } from "./services/api";
 import { doLogin } from "./redux/account/accountSlice";
+import Loading from "./components/Loading";
+import NotFound from "./components/NotFound";
+import AdminPage from "./pages/admin";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LayoutAdmin from "./components/Admin/LayoutAdmin";
 
 const Layout = () => {
   return (
@@ -30,10 +27,18 @@ const Layout = () => {
     </div>
   );
 };
+
 export default function App() {
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.account.isLoading);
 
   const fetchAccount = async () => {
+    if (
+      window.location.pathname === "/login" ||
+      window.location.pathname === "/register"
+    ) {
+      return;
+    }
     const res = await callFetchAccount();
     if (res?.data?.user) {
       dispatch(doLogin(res.data.user));
@@ -48,7 +53,7 @@ export default function App() {
     {
       path: "/",
       element: <Layout />,
-      errorElement: <div>404 not found</div>,
+      errorElement: <NotFound />,
 
       children: [
         { index: true, element: <Home /> },
@@ -70,11 +75,43 @@ export default function App() {
       path: "/register",
       element: <RegisterPage />,
     },
+
+    {
+      path: "/admin",
+      element: <LayoutAdmin />,
+      errorElement: <NotFound />,
+
+      children: [
+        {
+          index: true,
+          element: (
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "user",
+          element: <ContactPage />,
+        },
+        {
+          path: "book",
+          element: <BookPage />,
+        },
+      ],
+    },
   ]);
 
   return (
     <>
-      <RouterProvider router={router} />
+      {isLoading == false ||
+      window.location.pathname === "/login" ||
+      window.location.pathname === "/register" ||
+      window.location.pathname === "/" ? (
+        <RouterProvider router={router} />
+      ) : (
+        <Loading />
+      )}
     </>
   );
 }
