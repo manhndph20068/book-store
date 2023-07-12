@@ -11,7 +11,7 @@ import {
   MenuUnfoldOutlined,
   DownOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, Dropdown, Space, message } from "antd";
+import { Layout, Menu, Dropdown, Space, message, Avatar } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -67,10 +67,22 @@ const LayoutAdmin = () => {
       key: "account",
     },
     {
+      label: (
+        <Link to={"/"} style={{ cursor: "pointer" }}>
+          Trang chủ
+        </Link>
+      ),
+      key: "home",
+    },
+    {
       label: <label style={{ cursor: "pointer" }}>Đăng xuất</label>,
       key: "logout",
     },
   ];
+
+  const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
+    user?.avatar
+  }`;
 
   return (
     <Layout style={{ minHeight: "100vh" }} className="layout-admin">
@@ -102,7 +114,7 @@ const LayoutAdmin = () => {
           <Dropdown menu={{ items: itemsDropdown }} trigger={["click"]}>
             <a onClick={(e) => e.preventDefault()}>
               <Space>
-                Welcome {user?.fullName}
+                <Avatar src={urlAvatar} /> {user?.fullName}
                 <DownOutlined />
               </Space>
             </a>
@@ -111,7 +123,7 @@ const LayoutAdmin = () => {
         <Content>
           <Outlet />
         </Content>
-        <Footer style={{ padding: 0 }}>footer</Footer>
+        {/* <Footer style={{ padding: 0 }}>footer</Footer> */}
       </Layout>
     </Layout>
   );

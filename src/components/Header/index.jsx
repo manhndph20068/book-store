@@ -4,9 +4,9 @@ import { BiCart } from "react-icons/bi";
 import "./header.scss";
 import { DownOutlined } from "@ant-design/icons";
 import { Divider, Badge, Drawer, message } from "antd";
-import { Dropdown, Space } from "antd";
+import { Dropdown, Space, Avatar } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { callLogout } from "../../services/api";
 import { doLogout } from "../../redux/account/accountSlice";
 
@@ -36,6 +36,16 @@ const Header = () => {
       key: "logout",
     },
   ];
+  if (user?.role === "ADMIN") {
+    items.unshift({
+      label: <Link to={"/admin"}>Trang quản trị</Link>,
+      key: "admin",
+    });
+  }
+
+  const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
+    user?.avatar
+  }`;
 
   return (
     <>
@@ -57,7 +67,7 @@ const Header = () => {
           </div>
           <div className="page-header__right">
             <ul className="navigation">
-              <li className="navigation__item">
+              <li className="navigation__item badge">
                 <Badge count={5} size={"small"}>
                   <BiCart className="icon-cart" />
                 </Badge>
@@ -78,7 +88,8 @@ const Header = () => {
                   >
                     <a onClick={(e) => e.preventDefault()}>
                       <Space className="account">
-                        Wellcome {user?.fullName}
+                        <Avatar src={urlAvatar} />
+                        {user?.fullName}
                         <DownOutlined />
                       </Space>
                     </a>

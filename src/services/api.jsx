@@ -28,4 +28,24 @@ const callLogout = () => {
   return axios.post("/api/v1/auth/logout");
 };
 
-export { callRegister, callLogin, callFetchAccount, callLogout };
+const callGetAllUserWithPaginate = (query) => {
+  return axios.get(`/api/v1/user?${query}`);
+};
+
+const callCreateUser = (fullName, password, email, phone) => {
+  return axios.post(`/api/v1/user`, {
+    fullName,
+    password,
+    email,
+    phone,
+  });
+};
+
+export {
+  callRegister,
+  callLogin,
+  callFetchAccount,
+  callLogout,
+  callGetAllUserWithPaginate,
+  callCreateUser,
+};
