@@ -41,6 +41,10 @@ const callCreateUser = (fullName, password, email, phone) => {
   });
 };
 
+const callImportUser = (data) => {
+  return axios.post(`/api/v1/user/bulk-create`, data);
+};
+
 export {
   callRegister,
   callLogin,
@@ -48,4 +52,5 @@ export {
   callLogout,
   callGetAllUserWithPaginate,
   callCreateUser,
+  callImportUser,
 };

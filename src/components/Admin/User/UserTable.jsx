@@ -13,6 +13,7 @@ import { Button, Tooltip, Space } from "antd";
 import ViewUserDetail from "./ViewUserDetail";
 import UserModelCreate from "./UserModelCreate";
 import UserModelImport from "./UserModelImport";
+import * as XLSX from "xlsx";
 
 const UserTable = () => {
   const [listUser, setListUser] = useState([]);
@@ -109,6 +110,17 @@ const UserTable = () => {
     console.log("params", pagination, filters, sorter, extra);
   };
 
+  const handleExportUsers = () => {
+    if (listUser.length > 0) {
+      const worksheet = XLSX.utils.json_to_sheet(listUser);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+      //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+      XLSX.writeFile(workbook, "DataUser.csv");
+    }
+  };
+
   const renderHeaderTable = () => {
     return (
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -117,10 +129,7 @@ const UserTable = () => {
           <Button
             type="primary"
             icon={<ExportOutlined />}
-            onClick={() => {
-              setFilter("");
-              setQuery("");
-            }}
+            onClick={() => handleExportUsers()}
           >
             Export
           </Button>

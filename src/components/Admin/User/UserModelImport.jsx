@@ -12,6 +12,7 @@ import { Divider } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { useState } from "react";
+import { callImportUser } from "../../../services/api";
 const { Dragger } = Upload;
 
 const UserModelImport = (props) => {
@@ -20,6 +21,7 @@ const UserModelImport = (props) => {
   const [dataImport, setDataImport] = useState([]);
 
   const handleCancel = () => {
+    setDataImport([]);
     setIsModalImportOpen(false);
   };
 
@@ -71,16 +73,36 @@ const UserModelImport = (props) => {
     },
   };
 
+  const handleSubmitImportFile = async () => {
+    const data = dataImport.map((item) => {
+      item.password = "123456";
+      return item;
+    });
+    const res = await callImportUser(data);
+    if (res.data) {
+      notification.success({
+        message: `Succes: ${res.data.countSuccess}, Error: ${res.data.countError}`,
+        description: "Upload thành công",
+      });
+      setDataImport([]);
+      setIsModalImportOpen(false);
+      fetchUser();
+    } else {
+      notification.error({
+        message: res.message,
+        description: "Upload thành công",
+      });
+    }
+  };
+
   return (
     <>
       <Modal
         title="Import"
         open={isModalImportOpen}
-        onOk={() => {
-          setIsModalImportOpen(false);
-        }}
+        onOk={handleSubmitImportFile}
         onCancel={handleCancel}
-        okButtonProps={{ disabled: true }}
+        okButtonProps={{ disabled: dataImport.length < 1 }}
       >
         <Dragger {...UploadProps}>
           <p className="ant-upload-drag-icon">
@@ -94,7 +116,7 @@ const UserModelImport = (props) => {
             uploading company data or other banned files.
           </p>
         </Dragger>
-        <Divider />
+
         <Table
           dataSource={dataImport}
           title={() => <span>Dữ liệu upload: </span>}
