@@ -1,19 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { Row, Table, Col } from "antd";
 import "./UserTable.scss";
-import { callGetAllUserWithPaginate } from "../../../services/api";
+import {
+  callDeletetUser,
+  callGetAllUserWithPaginate,
+} from "../../../services/api";
 import InputSearch from "./InputSearch";
 import {
   ReloadOutlined,
   ExportOutlined,
   ImportOutlined,
   PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
-import { Button, Tooltip, Space } from "antd";
+import {
+  Button,
+  Tooltip,
+  Space,
+  Popconfirm,
+  message,
+  notification,
+} from "antd";
 import ViewUserDetail from "./ViewUserDetail";
 import UserModelCreate from "./UserModelCreate";
 import UserModelImport from "./UserModelImport";
 import * as XLSX from "xlsx";
+import UserModelUpdate from "./UserModalUpdate";
 
 const UserTable = () => {
   const [listUser, setListUser] = useState([]);
@@ -24,7 +37,9 @@ const UserTable = () => {
   const [filter, setFilter] = useState("");
   const [sortQuery, setQuery] = useState("");
   const [openViewDetail, setOpenViewDetail] = useState(false);
+  const [openViewUpdate, setOpenViewUpdate] = useState(false);
   const [dataViewDetail, setDataViewDetail] = useState({});
+  const [dataViewUpdate, setDataViewUpdate] = useState({});
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
 
@@ -55,6 +70,20 @@ const UserTable = () => {
   useEffect(() => {
     fetchUser();
   }, [current, pageSize, filter, sortQuery]);
+
+  const confirm = async (_id) => {
+    const res = await callDeletetUser(_id);
+    console.log("res", res);
+    if (res.statusCode === 200) {
+      message.success("Xóa thành công");
+      fetchUser();
+    } else {
+      notification.error({
+        message: "Error",
+        description: "Some thing wrong when delete user",
+      });
+    }
+  };
 
   const columns = [
     {
@@ -88,6 +117,33 @@ const UserTable = () => {
       title: "Phone",
       dataIndex: "phone",
       sorter: true,
+    },
+    {
+      title: "Action",
+      render: (text, record, index) => {
+        return (
+          <div style={{ display: "flex", gap: 20 }}>
+            <EditOutlined
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                console.log("record", record);
+                setDataViewUpdate(record);
+                setOpenViewUpdate(true);
+              }}
+            />
+            <Popconfirm
+              placement="left"
+              title={`Are you sure to delete ${record.email}?`}
+              description={`Delete the ${record.role}?`}
+              onConfirm={() => confirm(record._id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <DeleteOutlined />
+            </Popconfirm>
+          </div>
+        );
+      },
     },
   ];
 
@@ -214,6 +270,13 @@ const UserTable = () => {
       <UserModelImport
         isModalImportOpen={isModalImportOpen}
         setIsModalImportOpen={setIsModalImportOpen}
+        fetchUser={fetchUser}
+      />
+      <UserModelUpdate
+        openViewUpdate={openViewUpdate}
+        setOpenViewUpdate={setOpenViewUpdate}
+        dataViewUpdate={dataViewUpdate}
+        setDataViewUpdate={setDataViewUpdate}
         fetchUser={fetchUser}
       />
     </>

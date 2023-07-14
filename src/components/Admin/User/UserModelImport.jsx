@@ -8,7 +8,6 @@ import {
   notification,
   Upload,
 } from "antd";
-import { Divider } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { useState } from "react";
