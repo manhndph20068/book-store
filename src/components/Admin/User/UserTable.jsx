@@ -43,10 +43,6 @@ const UserTable = () => {
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalImportOpen, setIsModalImportOpen] = useState(false);
 
-  const handleSearch = (querySearch) => {
-    setFilter(querySearch);
-  };
-
   const fetchUser = async () => {
     setIsLoading(true);
     let query = `current=${current}&pageSize=${pageSize}`;
@@ -83,6 +79,10 @@ const UserTable = () => {
         description: "Some thing wrong when delete user",
       });
     }
+  };
+
+  const handleSearch = (querySearch) => {
+    setFilter(querySearch);
   };
 
   const columns = [

@@ -1,9 +1,9 @@
 import "./footer.scss";
 const Footer = () => {
   return (
-    <footer>
+    <Footer>
       <div>Nguyen Duc Manh</div>
-    </footer>
+    </Footer>
   );
 };
 export default Footer;
