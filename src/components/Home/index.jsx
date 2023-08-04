@@ -11,6 +11,7 @@ import {
   Rate,
   Tabs,
   Pagination,
+  Spin,
 } from "antd";
 import { callGetListCategory, callListBookAdmin } from "../../services/api";
 import { useEffect, useState } from "react";
@@ -22,6 +23,9 @@ const Home = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(6);
   const [total, setTotal] = useState(0);
+  const [loadingProd, setLoadingProd] = useState(false);
+  const [sortQuery, setSortQuery] = useState("sort=-sold");
+  const [filter, setFilter] = useState("");
 
   const handleChangePage = (pagination) => {
     console.log(">>> check pagination", pagination);
@@ -35,14 +39,30 @@ const Home = () => {
 
   const handleChangeFilter = (changedValues, values) => {
     console.log(">>> check handleChangeFilter", changedValues, values);
+
+    if (changedValues.category) {
+      const category = values.category;
+      if (category && category.length > 0) {
+        const f = category.join(",");
+        setFilter(`category=${f}`);
+      } else {
+        setFilter("");
+      }
+    }
   };
 
   const onFinish = (values) => {
     console.log(">>> check onFinish", values);
-  };
 
-  const onChange = (key) => {
-    console.log(key);
+    if (values?.range?.from >= 0 && values?.range?.to >= 0) {
+      console.log("checkedddd");
+      let f = `price>=${values?.range?.from}&price<=${values?.range?.to}`;
+      if (values?.category?.length) {
+        const cate = values?.category?.join(",");
+        f += `&category=${cate}`;
+      }
+      setFilter(f);
+    }
   };
 
   useEffect(() => {
@@ -58,35 +78,43 @@ const Home = () => {
 
   useEffect(() => {
     let query = `current=${current}&pageSize=${pageSize}`;
+    if (sortQuery) {
+      query += `&${sortQuery}`;
+    }
+    if (filter) {
+      query += `&${filter}`;
+    }
     const fetchAllBook = async () => {
+      setLoadingProd(true);
       let res = await callListBookAdmin(query);
       if (res?.data?.result) {
         setListBook(res.data.result);
         setTotal(res.data.meta.total);
+        setLoadingProd(false);
       }
     };
 
     fetchAllBook();
-  }, [current, pageSize]);
+  }, [current, pageSize, sortQuery, filter]);
 
   const items = [
     {
-      key: "1",
+      key: "sort=-sold",
       label: `Phổ biến`,
       children: <></>,
     },
     {
-      key: "2",
+      key: "sort=-updatedAt",
       label: `Hàng Mới`,
       children: <></>,
     },
     {
-      key: "3",
+      key: "sort=price",
       label: `Giá Thấp Đến Cao`,
       children: <></>,
     },
     {
-      key: "4",
+      key: "sort=-price",
       label: `Giá Cao Đến Thấp`,
       children: <></>,
     },
@@ -231,44 +259,54 @@ const Home = () => {
 
           <Col lg={20} md={24} xs={24} className="right-content">
             <Row>
-              <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+              <Tabs
+                defaultActiveKey="sort=-sold"
+                items={items}
+                onChange={(value) => {
+                  setSortQuery(value);
+                }}
+                style={{ overflowX: "auto" }}
+              />
             </Row>
-            <Row className="customize-row">
-              {listBook.length > 0 &&
-                listBook.map((item, index) => {
-                  return (
-                    <div className="column">
-                      <div className={`book-${index + 1}`}>
-                        <div className="wrapper">
-                          <div className="thumbnail">
-                            <img
-                              src={`${
-                                import.meta.env.VITE_BACKEND_URL
-                              }/images/book/${item.thumbnail}`}
-                              alt="thumbnail book"
-                            />
-                          </div>
-                          <div className="text">{item.mainText}</div>
-                          <div className="price" style={{ fontSize: "1rem" }}>
-                            {new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(item.price)}
-                          </div>
-                          <div className="rating">
-                            <Rate
-                              value={5}
-                              disabled
-                              style={{ color: "#ffce3d", fontSize: 10 }}
-                            />
-                            <span>Đã bán {item.sold}</span>
+            <Spin spinning={loadingProd}>
+              <Row className="customize-row">
+                {listBook.length > 0 &&
+                  listBook.map((item, index) => {
+                    return (
+                      <div className="column">
+                        <div className={`book-${index + 1}`}>
+                          <div className="wrapper">
+                            <div className="thumbnail">
+                              <img
+                                src={`${
+                                  import.meta.env.VITE_BACKEND_URL
+                                }/images/book/${item.thumbnail}`}
+                                alt="thumbnail book"
+                              />
+                            </div>
+                            <div className="text">{item.mainText}</div>
+                            <div className="price" style={{ fontSize: "1rem" }}>
+                              {new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(item.price)}
+                            </div>
+                            <div className="rating">
+                              <Rate
+                                value={5}
+                                disabled
+                                style={{ color: "#ffce3d", fontSize: 10 }}
+                              />
+                              <span>Đã bán {item.sold}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-            </Row>
+                    );
+                  })}
+              </Row>
+            </Spin>
+
             <Divider />
             <Row style={{ display: "flex", justifyContent: "center" }}>
               <Pagination
