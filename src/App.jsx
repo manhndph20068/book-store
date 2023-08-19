@@ -65,7 +65,7 @@ export default function App() {
           element: <ContactPage />,
         },
         {
-          path: "book",
+          path: "book/:slug",
           element: <BookPage />,
         },
       ],
@@ -110,6 +110,7 @@ export default function App() {
       {isLoading == false ||
       window.location.pathname === "/login" ||
       window.location.pathname === "/register" ||
+      location.pathname.startsWith("/book/") ||
       window.location.pathname === "/" ? (
         <RouterProvider router={router} />
       ) : (

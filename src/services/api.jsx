@@ -128,6 +128,10 @@ const callDeletetBook = (_id) => {
   return axios.delete(`/api/v1/book/${_id}`);
 };
 
+const callGetBookById = (_id) => {
+  return axios.get(`/api/v1/book/${_id}`);
+};
+
 export {
   callRegister,
   callLogin,
@@ -144,4 +148,5 @@ export {
   callCreateBook,
   callUpdateBook,
   callDeletetBook,
+  callGetBookById,
 };
