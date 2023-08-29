@@ -15,7 +15,7 @@ const BookPage = (props) => {
       raw.items = getImage(raw);
       setTimeout(() => {
         setBookData(raw);
-      }, 800);
+      }, 500);
     }
   };
 

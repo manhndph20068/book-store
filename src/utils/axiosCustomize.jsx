@@ -34,10 +34,6 @@ instance.interceptors.request.use(
         error.config.headers["Authorization"] = `Bearer ${access_token}`;
         return instance.request(error.config);
       }
-      // return updateToken().then((token) => {
-      //   error.config.headers.xxxx <= set the token
-      //   return axios.request(config);
-      // });
     }
     if (
       error.config &&

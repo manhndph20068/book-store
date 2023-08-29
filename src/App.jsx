@@ -19,7 +19,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LayoutAdmin from "./components/Admin/LayoutAdmin";
 import UserTable from "./components/Admin/User/UserTable";
 import "./styles/reset.scss";
+import "./styles/global.scss";
 import BookTable from "./components/Admin/Book/BookTable";
+import OrderPage from "./pages/order";
 
 const Layout = () => {
   return (
@@ -61,8 +63,8 @@ export default function App() {
       children: [
         { index: true, element: <Home /> },
         {
-          path: "contact",
-          element: <ContactPage />,
+          path: "order",
+          element: <OrderPage />,
         },
         {
           path: "book/:slug",

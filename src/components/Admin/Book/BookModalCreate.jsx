@@ -156,6 +156,7 @@ const BookModalCreate = (props) => {
   const handleUploadFileThumbnail = async ({ file, onSuccess, onError }) => {
     console.log(">>> file ", file);
     const res = await callUploadBookImg(file);
+    console.log(">>> res callUploadBookImg", res);
     if (res && res.data) {
       setDataThumbnail([
         {

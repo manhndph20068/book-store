@@ -3,11 +3,44 @@ import "./ViewDetail.scss";
 import ImageGallery from "react-image-gallery";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import BookLoader from "./BookLoader";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { doAddToCartAction } from "../../redux/order/orderSlice";
 
 const ViewDetail = (props) => {
   const { bookData } = props;
+  const [currentQuantity, setCurrentQuantity] = useState(1);
+  const [errorEnterQuantity, setErrorEnterQuantity] = useState("");
+  const dispatch = useDispatch();
+
   const images = bookData?.items ?? [];
   console.log("bookData", bookData);
+
+  const handleChangeButton = (type) => {
+    if (type === "MINUS") {
+      if (currentQuantity - 1 <= 0) return;
+      setCurrentQuantity(currentQuantity - 1);
+    }
+    if (type === "PLUS") {
+      if (currentQuantity - 1 >= bookData.quantity) return;
+      setCurrentQuantity(currentQuantity + 1);
+    }
+  };
+
+  const handleChangeInput = (value) => {
+    if (!isNaN(value)) {
+      if (+value > 0 && +value <= +bookData.quantity) {
+        setCurrentQuantity(+value);
+      }
+    }
+  };
+
+  const handleAddToCart = (quantity, book) => {
+    // let data = { quantity, detail: book, _id: book._id };
+    // console.log("data", data);
+    dispatch(doAddToCartAction({ quantity, detail: book, _id: book._id }));
+  };
+
   return (
     <>
       {bookData && bookData._id ? (
@@ -32,6 +65,7 @@ const ViewDetail = (props) => {
                     renderLeftNav={() => <></>}
                     renderRightNav={() => <></>}
                     slideOnThumbnailOver={true}
+                    autoPlay={true}
                   />
                 </Col>
                 <Col md={14} sm={24} xs={24}>
@@ -43,6 +77,7 @@ const ViewDetail = (props) => {
                       renderLeftNav={() => <></>}
                       renderRightNav={() => <></>}
                       slideOnThumbnailOver={true}
+                      autoPlay={true}
                     />
                   </Col>
                   <Col span={24}>
@@ -77,17 +112,36 @@ const ViewDetail = (props) => {
                       <div className="quantity">
                         <span className="left-side">Số lượng:</span>
                         <span className="right-side">
-                          <button className="btn">
+                          <button
+                            className="btn"
+                            onClick={() => handleChangeButton("MINUS")}
+                          >
                             <MinusOutlined />
                           </button>
-                          <input defaultValue={1} className="btn inp" />
-                          <button className="btn">
+                          <input
+                            className="btn inp"
+                            onChange={(e) => handleChangeInput(e.target.value)}
+                            value={currentQuantity}
+                          />
+                          <button
+                            className="btn"
+                            onClick={() => handleChangeButton("PLUS")}
+                          >
                             <PlusOutlined />
                           </button>
                         </span>
+                        <span className="right-side_quantity">
+                          Số lượng có sãn: {bookData.quantity}
+                        </span>
                       </div>
+                      <div className="error">{errorEnterQuantity}</div>
                       <div className="add-to-cart">
-                        <button className="btn-add-to-cart">
+                        <button
+                          className="btn-add-to-cart"
+                          onClick={() =>
+                            handleAddToCart(currentQuantity, bookData)
+                          }
+                        >
                           Thêm vào giỏ hàng
                         </button>
                         <button className="btn-paid">Mua ngay</button>
