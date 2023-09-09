@@ -34,6 +34,15 @@ export const accountSlice = createSlice({
       }),
         (state.isAuthenticated = false),
         localStorage.removeItem("access_token");
+      window.location.reload();
+    },
+    doUploadAvatarAtion: (state, action) => {
+      state.user.avatar = action.payload;
+    },
+    doUpdateUserInfoAtion: (state, action) => {
+      state.user.avatar = action.payload.avatar;
+      state.user.phone = action.payload.phone;
+      state.user.fullName = action.payload.fullName;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -41,7 +50,8 @@ export const accountSlice = createSlice({
   extraReducers: (builder) => {},
 });
 
-export const { doLogin, doLogout } = accountSlice.actions;
+export const { doLogin, doLogout, doUploadAvatarAtion, doUpdateUserInfoAtion } =
+  accountSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

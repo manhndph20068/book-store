@@ -56,6 +56,21 @@ instance.interceptors.response.use(
     return response && response.data ? response.data : response;
   },
   function (error) {
+    // if (error.config && error.response && +error.response.status === 401) {
+    //   const access_token = await handleRefreshToken();
+    //   if (access_token) {
+    //     error.config.headers["Authorization"] = `Bearer ${access_token}`;
+    //     return instance.request(error.config);
+    //   }
+    // }
+    // if (
+    //   error.config &&
+    //   error.response &&
+    //   +error.response.status === 400 &&
+    //   error.config.url === "/api/v1/auth/refresh"
+    // ) {
+    //   window.location.href = "/login";
+    // }
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     return error?.response?.data ?? Promise.reject(error);

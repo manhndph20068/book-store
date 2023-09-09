@@ -132,6 +132,55 @@ const callGetBookById = (_id) => {
   return axios.get(`/api/v1/book/${_id}`);
 };
 
+const callCreateAnOrder = (data) => {
+  return axios.post(`/api/v1/order`, {
+    ...data,
+  });
+};
+
+const callGetHistory = () => {
+  return axios.get(`/api/v1/history`);
+};
+
+const callUpdaloadAvatar = (fileImg) => {
+  const bodyFormData = new FormData();
+  bodyFormData.append("fileImg", fileImg);
+  return axios({
+    method: "post",
+    url: "/api/v1/file/upload",
+    data: bodyFormData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "upload-type": "avatar",
+    },
+  });
+};
+
+const callUpdateUserInfor = (_id, phone, fullName, avatar) => {
+  return axios.put(`/api/v1/user`, {
+    _id,
+    phone,
+    fullName,
+    avatar,
+  });
+};
+
+const callChangePassword = (email, oldpass, newpass) => {
+  return axios.post(`/api/v1/user/change-password`, {
+    email,
+    oldpass,
+    newpass,
+  });
+};
+
+const callGetInforDashBoard = () => {
+  return axios.get(`/api/v1/database/dashboard`);
+};
+
+const callGetOrders = () => {
+  return axios.get(`/api/v1/order`);
+};
+
 export {
   callRegister,
   callLogin,
@@ -149,4 +198,11 @@ export {
   callUpdateBook,
   callDeletetBook,
   callGetBookById,
+  callCreateAnOrder,
+  callGetHistory,
+  callUpdaloadAvatar,
+  callUpdateUserInfor,
+  callChangePassword,
+  callGetInforDashBoard,
+  callGetOrders,
 };

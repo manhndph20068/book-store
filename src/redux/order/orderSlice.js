@@ -65,7 +65,6 @@ export const orderSlice = createSlice({
       state.cart = [];
     },
     doDeleteItemCartAction: (state, action) => {
-      console.log("action.payload", action.payload);
       state.cart = state.cart.filter((c) => c._id !== action.payload);
     },
   },

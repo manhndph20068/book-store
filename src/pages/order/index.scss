@@ -1,7 +1,12 @@
 .order-page-layout {
   background-color: #f2f2f2;
-  min-height: 500px;
+  min-height: 600px;
   .order-page-container {
+    .order-step {
+      padding: 15px;
+      background-color: white;
+      border-radius: 5px;
+    }
     padding: 10px 0;
     .order-left-content {
       .cart-item {
@@ -41,6 +46,11 @@
     .order-right-content {
       padding: 15px 0;
       .order-content {
+        .order-title-input {
+          // display: flex;
+          // justify-content: space-between;
+          font-size: large;
+        }
         background-color: white;
         border-radius: 5px;
         padding: 17px;

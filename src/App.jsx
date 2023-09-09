@@ -22,6 +22,8 @@ import "./styles/reset.scss";
 import "./styles/global.scss";
 import BookTable from "./components/Admin/Book/BookTable";
 import OrderPage from "./pages/order";
+import History from "./pages/history";
+import OrderTable from "./components/Admin/Order/OrderTable";
 
 const Layout = () => {
   return (
@@ -64,11 +66,23 @@ export default function App() {
         { index: true, element: <Home /> },
         {
           path: "order",
-          element: <OrderPage />,
+          element: (
+            <ProtectedRoute>
+              <OrderPage />
+            </ProtectedRoute>
+          ),
         },
         {
           path: "book/:slug",
           element: <BookPage />,
+        },
+        {
+          path: "history",
+          element: (
+            <ProtectedRoute>
+              <History />
+            </ProtectedRoute>
+          ),
         },
       ],
     },
@@ -83,7 +97,11 @@ export default function App() {
 
     {
       path: "/admin",
-      element: <LayoutAdmin />,
+      element: (
+        <ProtectedRoute>
+          <LayoutAdmin />
+        </ProtectedRoute>
+      ),
       errorElement: <NotFound />,
 
       children: [
@@ -97,11 +115,27 @@ export default function App() {
         },
         {
           path: "user",
-          element: <UserTable />,
+          element: (
+            <ProtectedRoute>
+              <UserTable />
+            </ProtectedRoute>
+          ),
         },
         {
           path: "book",
-          element: <BookTable />,
+          element: (
+            <ProtectedRoute>
+              <BookTable />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "order",
+          element: (
+            <ProtectedRoute>
+              <OrderTable />
+            </ProtectedRoute>
+          ),
         },
       ],
     },

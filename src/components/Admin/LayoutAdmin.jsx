@@ -15,6 +15,7 @@ import { Layout, Menu, Dropdown, Space, message, Avatar } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -32,11 +33,6 @@ const items = [
       {
         label: <Link to="/admin/user">CRUD</Link>,
         key: "crud",
-        icon: <TeamOutlined />,
-      },
-      {
-        label: "Files1",
-        key: "file1",
         icon: <TeamOutlined />,
       },
     ],
@@ -60,6 +56,18 @@ const LayoutAdmin = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (window.location.pathname.includes("/book")) {
+      setActiveMenu("book");
+    }
+    if (window.location.pathname.includes("/user")) {
+      setActiveMenu("crud");
+    }
+    if (window.location.pathname.includes("/order")) {
+      setActiveMenu("order");
+    }
+  }, []);
 
   const itemsDropdown = [
     {
@@ -94,7 +102,7 @@ const LayoutAdmin = () => {
       >
         <div style={{ height: 32, margin: 16, textAlign: "center" }}>Admin</div>
         <Menu
-          defaultSelectedKeys={[activeMenu]}
+          selectedKeys={[activeMenu]}
           mode="inline"
           items={items}
           onClick={(e) => setActiveMenu(e.key)}

@@ -1,35 +1,37 @@
-import { Col, Divider, InputNumber, Popconfirm, Row } from "antd";
+import {
+  Button,
+  Col,
+  Divider,
+  InputNumber,
+  Popconfirm,
+  Result,
+  Row,
+  Steps,
+} from "antd";
 import "./index.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { DeleteOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  LoadingOutlined,
+  ShoppingCartOutlined,
+  SmileOutlined,
+  SolutionOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import {
   doDeleteItemCartAction,
   doUpdateCartAction,
 } from "../../redux/order/orderSlice.js";
+import ViewOrder from "../../components/Order/ViewOrder";
+import ViewPayment from "../../components/Order/ViewPayment";
+import { useNavigate } from "react-router-dom";
 const OrderPage = () => {
   const [totalPrice, setTotalPrice] = useState(0);
-
+  const [currentStep, setCurrentStep] = useState(0);
   const cart = useSelector((state) => state.order.cart);
   const dispatch = useDispatch();
-
-  const handleChangeInput = (value, item) => {
-    console.log("value", value);
-    console.log("item", item);
-    if (value < 0 || !value) {
-      console.log("ko update");
-      return;
-    }
-    if (!isNaN(value)) {
-      dispatch(
-        doUpdateCartAction({ quantity: value, detail: item, _id: item._id })
-      );
-    }
-  };
-
-  const confirmDelete = (item) => {
-    dispatch(doDeleteItemCartAction(item._id));
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (cart && cart.length > 0) {
@@ -43,89 +45,67 @@ const OrderPage = () => {
     }
   }, [cart]);
 
+  const steps = [
+    {
+      title: "Đặt hàng",
+      status: "finish",
+      icon: <ShoppingCartOutlined />,
+    },
+    {
+      title: "Thanh Toán",
+      status: "finish",
+      icon: <SolutionOutlined />,
+    },
+    {
+      title: "Done",
+      status: "wait",
+      icon: <SmileOutlined />,
+    },
+  ];
+
+  const items = steps.map((item) => ({
+    key: item.title,
+    title: item.title,
+    icon: item.icon,
+  }));
+
+  const continueShopping = () => {
+    navigate("/");
+  };
+  const showHistory = () => {
+    navigate("/history");
+  };
+
   return (
     <div className="order-page-layout">
       <div
         className="order-page-container"
         style={{ maxWidth: 1290, margin: "0 auto" }}
       >
-        <Row gutter={[20, 20]} style={{ justifyContent: "space-between" }}>
-          <Col lg={17} md={15} xs={24} className="order-left-content">
-            {cart?.length > 0 &&
-              cart.map((item, index) => {
-                return (
-                  <div className="cart-item">
-                    <img
-                      className="item-img"
-                      src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${
-                        item.detail.thumbnail
-                      }`}
-                    />
-                    <div className="item-name">{item.detail.mainText}</div>
-                    <div className="item-price">
-                      {Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(item.detail.price)}
-                    </div>
-                    <InputNumber
-                      className="item-input"
-                      onChange={(value) => handleChangeInput(value, item)}
-                      value={item.quantity}
-                    />
-                    <div className="item-total-price">
-                      Tổng:
-                      {Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(item.detail.price * item.quantity)}
-                    </div>
-                    <div className="item-delete">
-                      <Popconfirm
-                        placement="top"
-                        title={`Bạn có muốn xoá sản phẩm này không?`}
-                        onConfirm={() => confirmDelete(item)}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <DeleteOutlined />
-                      </Popconfirm>
-                    </div>
-                  </div>
-                );
-              })}
-          </Col>
-          <Col lg={7} md={9} xs={24} className="order-right-content">
-            <div className="order-content">
-              <div className="order-tam-tinh">
-                <span>Tạm tính:</span>
-                <span>
-                  {Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(totalPrice || 0)}
-                </span>
-              </div>
-
-              <Divider />
-              <div className="order-tong">
-                <span>Tổng:</span>
-                <span style={{ color: "red" }}>
-                  {Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(totalPrice || 0)}
-                </span>
-              </div>
-              <Divider />
-              <div className="order-btn-paid">
-                <span className="order-btn-paid-title">
-                  Mua Hàng({cart?.length ?? 0})
-                </span>
-              </div>
-            </div>
-          </Col>
-        </Row>
+        <div className="order-step">
+          <Steps current={currentStep} items={items} />
+        </div>
+        {currentStep === 0 && <ViewOrder setCurrentStep={setCurrentStep} />}
+        {currentStep === 1 && <ViewPayment setCurrentStep={setCurrentStep} />}
+        {currentStep === 2 && (
+          <Result
+            status="success"
+            title="Đơn hàng đã được đặt thành công !"
+            subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+            extra={[
+              <Button
+                onClick={() => continueShopping()}
+                type="primary"
+                key="console"
+              >
+                Tiếp tục mua hàng
+              </Button>,
+              <Button onClick={() => showHistory()} key="buy">
+                Lịch sử đơn hàng
+              </Button>,
+            ]}
+          />
+        )}
       </div>
     </div>
   );

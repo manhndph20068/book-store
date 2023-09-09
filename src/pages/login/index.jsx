@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./index.scss";
 import {
   Button,
   Checkbox,
@@ -9,10 +10,11 @@ import {
   notification,
   message,
 } from "antd";
-import { callLogin } from "../../services/api";
+import { callFetchAccount, callLogin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { doLogin } from "../../redux/account/accountSlice";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -28,7 +30,9 @@ const LoginPage = () => {
       localStorage.setItem("access_token", res.data.access_token);
       dispatch(doLogin(res.data.user));
       message.success("Đăng Nhập thành công");
+      await callFetchAccount();
       navigate("/");
+      window.location.reload();
     } else {
       notification.error({
         message: "Error",
@@ -39,10 +43,10 @@ const LoginPage = () => {
 
   return (
     <div>
-      <div className="form-register">
+      <div className="form-register" style={{ padding: "15px" }}>
         <h3 style={{ textAlign: "center" }}>Login</h3>
         <Divider />
-        <Form
+        {/* <Form
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -74,11 +78,75 @@ const LoginPage = () => {
           >
             <Input.Password />
           </Form.Item>
-
+          <a style={{ display: "block", textAlign: "right" }}>
+            Do'nt have an account? Sign up now !
+          </a>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit" loading={isLoading}>
-              Submit
+              Login
             </Button>
+          </Form.Item>
+        </Form> */}
+
+        <Form
+          name="normal_login"
+          className="login-form"
+          style={{ maxWidth: 400, margin: "auto" }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+        >
+          <Form.Item
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: "Email không được để trống!",
+                type: "email",
+              },
+            ]}
+          >
+            <Input
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder="Email"
+            />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Password!",
+              },
+            ]}
+          >
+            <Input
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="Password"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Form.Item name="remember" valuePropName="checked" noStyle>
+              <Checkbox>Remember me</Checkbox>
+            </Form.Item>
+
+            <a className="login-form-forgot" href="">
+              Forgot password
+            </a>
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+              loading={isLoading}
+            >
+              Log in
+            </Button>
+            Or <a href="/register">register now!</a>
           </Form.Item>
         </Form>
       </div>

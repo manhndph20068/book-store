@@ -3,9 +3,17 @@ import { Navigate } from "react-router-dom";
 import NotPermitted from "../NotPermitted";
 
 const RoleBaseRoute = (props) => {
+  const isAdminRoute = window.location.pathname.startsWith("/admin");
   const role = useSelector((state) => state.account.user.role);
-  console.log("role", role);
-  return <>{role === "ADMIN" ? <>{props.children}</> : <NotPermitted />}</>;
+  if (
+    (isAdminRoute && role === "ADMIN") ||
+    (!isAdminRoute && (role === "USER" || role === "ADMIN"))
+  ) {
+    return <>{props.children}</>;
+  } else {
+    return <NotPermitted />;
+  }
+  // return <>{role === "ADMIN" ? <>{props.children}</> : <NotPermitted />}</>;
 };
 
 const ProtectedRoute = (props) => {

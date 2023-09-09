@@ -220,7 +220,7 @@ const BookTable = () => {
 
   return (
     <>
-      <Row style={{ justifyContent: "center", padding: "20px 0px 20px 0px" }}>
+      <Row style={{ justifyContent: "center", padding: "15px 0px 15px 0px" }}>
         <Col span={23}>
           <InputSearchBook handleFilter={handleFilter} />
         </Col>
